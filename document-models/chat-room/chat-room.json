@@ -1,0 +1,128 @@
+{
+    "id": "powerhouse/chat-room",
+    "name": "ChatRoom",
+    "extension": "",
+    "description": "",
+    "author": {
+        "name": "",
+        "website": ""
+    },
+    "specifications": [
+        {
+            "version": 1,
+            "changeLog": [],
+            "state": {
+                "global": {
+                    "schema": "type ChatRoomState {\n  id: OID!                    # Unique identifier for the chat-room\n  name: String!               # Name of the chat-room\n  description: String         # Optional description of the chat-room\n  createdAt: DateTime!        # Timestamp of when the chat-room was created\n  createdBy: ID!             # Agent ID of the user who created the chat-room\n  messages: [Message!]!       # List of messages in the chat-room\n}\n\ntype Message {\n  id: OID!                    # Unique identifier for the message\n  sender: User!              # Agent details of the message sender\n  content: String             # Message content\n  sentAt: DateTime!           # Timestamp of when the message was sent\n  reactions: [Reaction!]      # Reactions to the message\n}\n\ntype User {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}\n\ntype Reaction {\n  id: OID!                    # Unique identifier for the reaction\n  type: ReactionType!         # Type of reaction (one of the predefined emoji)\n  reactedBy: [ID!]!             # Agent ID of the user who reacted\n}\n\nenum ReactionType {\n  THUMBS_UP\n  THUMBS_DOWN\n  LAUGH\n  HEART\n  CRY\n}\n",
+                    "initialValue": "{\n  \"id\": \"\",\n  \"name\": \"\",\n  \"description\": \"\",\n  \"createdAt\": \"2024-11-27T09:17:45.998Z\",\n  \"createdBy\": \"\",\n  \"messages\": []\n}",
+                    "examples": []
+                },
+                "local": {
+                    "schema": "",
+                    "initialValue": "",
+                    "examples": []
+                }
+            },
+            "modules": [
+                {
+                    "id": "pI2axWEMqGs3K6HXTR+q/KwLxSg=",
+                    "name": "add_message",
+                    "description": "",
+                    "operations": [
+                        {
+                            "id": "ZiVRr2Y3GKa0R6bVZufVIgI5IW4=",
+                            "name": "ADD_MESSAGE",
+                            "description": "A message is created and sent to the chat-room. ",
+                            "schema": "input AddMessageInput {\n  messageId: OID!        # ID of the message that is being added\n  senderId: ID!          # ID of the user sending the message\n  content: String!        # Content of the message\n  sentAt: DateTime!\n}",
+                            "template": "",
+                            "reducer": "",
+                            "errors": [
+                                {
+                                    "id": "BQlJXztnelHuTVTgrwZ4n+1/5v8=",
+                                    "name": "MessageContentCannotBeEmpty",
+                                    "code": "",
+                                    "description": "",
+                                    "template": ""
+                                },
+                                {
+                                    "id": "kz5yjvp2fsU1AS4IgUBW9az2YcI=",
+                                    "name": "MessageContentExceedsTheMaximumLength",
+                                    "code": "",
+                                    "description": "",
+                                    "template": ""
+                                },
+                                {
+                                    "id": "Pdocy7E4XFEXvsFFZkYqyEZDezE=",
+                                    "name": "ChatRoomIsLocked",
+                                    "code": "",
+                                    "description": "",
+                                    "template": ""
+                                },
+                                {
+                                    "id": "8KeHMLYn6boS8vuq1JRfUyVjReI=",
+                                    "name": "FloodProtectionTooManyMessagesSentByTheUserInAShortTime",
+                                    "code": "",
+                                    "description": "",
+                                    "template": ""
+                                },
+                                {
+                                    "id": "H31CcOVmpZp+axRQW4GVIa+K1vU=",
+                                    "name": "BlockedSender",
+                                    "code": "",
+                                    "description": "",
+                                    "template": ""
+                                }
+                            ],
+                            "examples": [],
+                            "scope": "global"
+                        },
+                        {
+                            "id": "gVeRecdrNSqRuGNz85UbciPUUk8=",
+                            "name": "ADD_EMOJI_REACTION",
+                            "description": "Chat-room participant can react to the added messages. ",
+                            "schema": "input AddEmojiReactionInput {\n  messageId: OID!         # ID of the message to which the reaction is being added\n  reactedBy: ID!         # ID of the user adding the reaction\n  type: ReactionType!     # Type of the reaction (emoji)\n}",
+                            "template": "",
+                            "reducer": "",
+                            "errors": [
+                                {
+                                    "id": "+lvFo73nnDZMgSSeOf6Y2RXkOJ0=",
+                                    "name": "ReactingToADeletedMessage",
+                                    "code": "",
+                                    "description": "",
+                                    "template": ""
+                                },
+                                {
+                                    "id": "x+OXYVPMZvbCcWiHq5mMjtTwg9k=",
+                                    "name": "ReactingToAMessageInAClosedThread",
+                                    "code": "",
+                                    "description": "",
+                                    "template": ""
+                                },
+                                {
+                                    "id": "IWE5enoV0M6D701UZFovpNnzFVA=",
+                                    "name": "UserBlockedByTheMessageSender",
+                                    "code": "",
+                                    "description": "",
+                                    "template": ""
+                                }
+                            ],
+                            "examples": [],
+                            "scope": "global"
+                        },
+                        {
+                            "id": "DKcvwDzXCaV1QMIMr5xXfBzInCg=",
+                            "name": "REMOVE_EMOJI_REACTION",
+                            "description": "",
+                            "schema": "input RemoveEmojiReactionInput {\n  messageId: OID!   # ID of the message to which the reaction is being removed\n  senderId: ID!     # ID of the user that is removing the reaction\n  type: ReactionType!   # Type of the reaction (emoji)\n}",
+                            "template": "",
+                            "reducer": "",
+                            "errors": [],
+                            "examples": [],
+                            "scope": "global"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,72 @@
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar Amount_Percentage
+scalar EmailAddress
+scalar Date
+scalar DateTime
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+type ChatRoomState {
+  id: OID!                    # Unique identifier for the chat-room
+  name: String!               # Name of the chat-room
+  description: String         # Optional description of the chat-room
+  createdAt: DateTime!        # Timestamp of when the chat-room was created
+  createdBy: ID!             # Agent ID of the user who created the chat-room
+  messages: [Message!]!       # List of messages in the chat-room
+}
+
+type Message {
+  id: OID!                    # Unique identifier for the message
+  sender: User!              # Agent details of the message sender
+  content: String             # Message content
+  sentAt: DateTime!           # Timestamp of when the message was sent
+  reactions: [Reaction!]      # Reactions to the message
+}
+
+type User {
+  id: ID!
+  name: String
+  avatarUrl: URL
+}
+
+type Reaction {
+  id: OID!                    # Unique identifier for the reaction
+  type: ReactionType!         # Type of reaction (one of the predefined emoji)
+  reactedBy: [ID!]!             # Agent ID of the user who reacted
+}
+
+enum ReactionType {
+  THUMBS_UP
+  THUMBS_DOWN
+  LAUGH
+  HEART
+  CRY
+}
+
+
+
+
+# add_message
+
+input AddMessageInput {
+  messageId: OID!        # ID of the message that is being added
+  senderId: ID!          # ID of the user sending the message
+  content: String!        # Content of the message
+  sentAt: DateTime!
+}
+
+input AddEmojiReactionInput {
+  messageId: OID!         # ID of the message to which the reaction is being added
+  reactedBy: ID!         # ID of the user adding the reaction
+  type: ReactionType!     # Type of the reaction (emoji)
+}
+
+input RemoveEmojiReactionInput {
+  messageId: OID!   # ID of the message to which the reaction is being removed
+  senderId: ID!     # ID of the user that is removing the reaction
+  type: ReactionType!   # Type of the reaction (emoji)
+}

@@ -46,7 +46,6 @@ export const reducer: ChatRoomAddMessageOperations = {
       message.reactions = [
         ...reactions,
         {
-          id: "",
           reactedBy: [action.input.reactedBy],
           type: action.input.type,
         },

@@ -34,7 +34,6 @@ type Sender {
 }
 
 type Reaction {
-  id: OID!                    # Unique identifier for the reaction
   type: ReactionType!         # Type of reaction (one of the predefined emoji)
   reactedBy: [ID!]!             # Agent ID of the user who reacted
 }

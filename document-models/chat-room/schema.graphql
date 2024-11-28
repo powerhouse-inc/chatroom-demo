@@ -21,13 +21,13 @@ type ChatRoomState {
 
 type Message {
   id: OID!                    # Unique identifier for the message
-  sender: User!              # Agent details of the message sender
+  sender: Sender!              # Agent details of the message sender
   content: String             # Message content
   sentAt: DateTime!           # Timestamp of when the message was sent
   reactions: [Reaction!]      # Reactions to the message
 }
 
-type User {
+type Sender {
   id: ID!
   name: String
   avatarUrl: URL
@@ -54,7 +54,7 @@ enum ReactionType {
 
 input AddMessageInput {
   messageId: OID!        # ID of the message that is being added
-  senderId: ID!          # ID of the user sending the message
+  sender: Sender!          # ID of the user sending the message
   content: String!        # Content of the message
   sentAt: DateTime!
 }

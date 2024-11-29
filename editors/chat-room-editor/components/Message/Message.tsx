@@ -13,6 +13,7 @@ export interface MessageProps {
   timestamp: string;
   reactions?: ReactionType[];
   isCurrentUser?: boolean;
+  disabled?: boolean;
   onClickReaction?: (reaction: MessageReaction) => void;
 }
 
@@ -24,6 +25,7 @@ export const Message: React.FC<MessageProps> = (props) => {
     reactions,
     isCurrentUser,
     onClickReaction,
+    disabled = false,
   } = props;
 
   const date = new Date(timestamp).toLocaleTimeString();
@@ -102,6 +104,7 @@ export const Message: React.FC<MessageProps> = (props) => {
             {(reactions || []).map((reaction) => (
               <Reaction
                 bgColor={reactionBgColor}
+                disabled={disabled}
                 key={reaction.type}
                 onClick={() =>
                   onClickReaction &&

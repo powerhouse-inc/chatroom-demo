@@ -23,6 +23,7 @@ export const reactionMap = {
 
 export const MessageItem: React.FC<MessageItemProps> = (props) => {
   const { imgUrl, userName, isCurrentUser, ...messageProps } = props;
+  const { disabled = false } = messageProps;
 
   const [isHovered, setIsHovered] = useState(false);
   const [open, setOpen] = useState(false);
@@ -60,7 +61,7 @@ export const MessageItem: React.FC<MessageItemProps> = (props) => {
             style={{
               fontSize: "26px",
               cursor: "pointer",
-              visibility: isHovered ? "visible" : "hidden",
+              visibility: !disabled && isHovered ? "visible" : "hidden",
             }}
           >
             🫥
@@ -89,6 +90,7 @@ export const MessageItem: React.FC<MessageItemProps> = (props) => {
                       emoji,
                       type: key,
                       messageId: messageProps.id,
+                      reactedBy: [],
                     })
                   : null
               }

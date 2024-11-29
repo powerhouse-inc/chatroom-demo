@@ -9,7 +9,6 @@ import {
   actions,
 } from "../../document-models/chat-room";
 import { utils as documentModelUtils } from "document-model/document";
-import { Button } from "@powerhousedao/design-system";
 import {
   ChatRoom,
   ChatRoomProps,
@@ -76,9 +75,20 @@ const reactionKeyToReactionType = (reactionKey: string): ReactionType => {
   }
 };
 
+const mapReactions = (
+  reactions: Message["reactions"],
+): MessageProps["reactions"] => {
+  return (reactions || [])
+    .map((reaction) => ({
+      emoji: reactionTypeToEmoji(reaction.type),
+      reactedBy: reaction.reactedBy,
+      type: reactionTypeToReactionKey(reaction.type),
+    }))
+    .filter((reaction) => reaction.reactedBy.length > 0);
+};
+
 export default function Editor(props: IProps) {
-  // generate a random id
-  // const id = documentModelUtils.hashKey();
+  const disableChatRoom = !props.context.user;
 
   const onSendMessage: ChatRoomProps["onSendMessage"] = (message) => {
     props.dispatch(
@@ -87,24 +97,12 @@ export default function Editor(props: IProps) {
         content: message,
         sender: {
           id: props.context.user?.address || "anon-user",
-          name: props.context.user?.ens?.name || "Anon User",
+          name: props.context.user?.ens?.name || null,
           avatarUrl: props.context.user?.ens?.avatarUrl || null,
         },
         sentAt: new Date().toISOString(),
       }),
     );
-  };
-
-  const mapReactions = (
-    reactions: Message["reactions"],
-  ): MessageProps["reactions"] => {
-    return (reactions || [])
-      .map((reaction) => ({
-        emoji: reactionTypeToEmoji(reaction.type),
-        reactedBy: reaction.reactedBy,
-        type: reactionTypeToReactionKey(reaction.type),
-      }))
-      .filter((reaction) => reaction.reactedBy.length > 0);
   };
 
   const messages: ChatRoomProps["messages"] =
@@ -175,9 +173,14 @@ export default function Editor(props: IProps) {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        height: "calc(100vh - 140px)",
+      }}
+    >
       <ChatRoom
         description={props.document.state.global.description || undefined}
+        disabled={disableChatRoom}
         messages={messages}
         onClickReaction={onClickReaction}
         onSendMessage={onSendMessage}

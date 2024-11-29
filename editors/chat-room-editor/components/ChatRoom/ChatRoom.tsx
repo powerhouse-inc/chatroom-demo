@@ -11,6 +11,7 @@ export interface ChatRoomProps {
   description?: string;
   onClickReaction?: MessageProps["onClickReaction"];
   messages?: Omit<MessageItemProps, "onClickReaction">[];
+  disabled?: boolean;
 }
 
 export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
@@ -18,6 +19,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
     onSendMessage,
     title,
     description,
+    disabled = false,
     messages = [],
     onClickReaction = () => {},
   } = props;
@@ -67,13 +69,37 @@ export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
           <MessageItem
             key={message.id}
             {...message}
+            disabled={disabled}
             onClickReaction={onClickReaction}
           />
         ))}
       </div>
-      <div>
-        <TextInput onSendMessage={onSendMessage} />
-      </div>
+      {disabled ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <span
+            style={{
+              padding: "8px",
+              paddingTop: "4px",
+              paddingBottom: "4px",
+              minWidth: "200px",
+              backgroundColor: "#f0f0f0",
+              borderRadius: "8px",
+            }}
+          >
+            You need to login to start chatting ⚠️
+          </span>
+        </div>
+      ) : (
+        <div>
+          <TextInput onSendMessage={onSendMessage} />
+        </div>
+      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ const meta: Meta<typeof TextInput> = {
   component: TextInput,
   argTypes: {
     onSendMessage: { action: "sendMessage" },
+    disabled: { control: "boolean" },
   },
 };
 
@@ -14,6 +15,7 @@ type Story = StoryObj<typeof TextInput>;
 
 export const Primary: Story = {
   args: {
+    disabled: false,
     onSendMessage: (message) => console.log("onSendMessage", message),
   },
 };

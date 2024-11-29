@@ -12,6 +12,7 @@ const meta: Meta<typeof ChatRoom> = {
     description: { control: "text" },
     onSendMessage: { action: "sendMessage" },
     messages: { control: "object" },
+    disabled: { control: "boolean" },
   },
 };
 
@@ -52,6 +53,7 @@ export const Primary: Story = {
     description: "Welcome to the chat room",
     onSendMessage: (message) => console.log("onSendMessage", message),
     onClickReaction: (reaction) => console.log("onClickReaction", reaction),
+    disabled: false,
     messages: [
       {
         id: "1",

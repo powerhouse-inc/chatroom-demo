@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React from "react";
 
 export type ReactionType = {
@@ -11,10 +12,17 @@ export interface ReactionProps {
   readonly onClick?: () => void;
   readonly bgColor: string;
   readonly textColor: string;
+  readonly disabled?: boolean;
 }
 
 export const Reaction: React.FC<ReactionProps> = (props) => {
-  const { bgColor, reaction, textColor, onClick } = props;
+  const { bgColor, reaction, textColor, onClick, disabled = false } = props;
+
+  const onClickHandler = () => {
+    if (!disabled && onClick) {
+      onClick();
+    }
+  };
 
   return (
     <div
@@ -25,18 +33,19 @@ export const Reaction: React.FC<ReactionProps> = (props) => {
       }}
     >
       <div
-        onClick={onClick}
+        onClick={onClickHandler}
         style={{
           width: "20px",
           height: "20px",
-          fontSize: "14px",
+          fontSize: "12px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: bgColor,
           borderRadius: "50%",
           marginRight: "4px",
-          cursor: "pointer",
+          textAlign: "center",
+          cursor: disabled ? "default" : "pointer",
         }}
       >
         {reaction.emoji}

@@ -4,9 +4,13 @@ import { SendIcon } from "./SendIcon";
 
 export interface TextInputProps {
   onSendMessage: (message: string) => void;
+  disabled?: boolean;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ onSendMessage }) => {
+export const TextInput: React.FC<TextInputProps> = ({
+  onSendMessage,
+  disabled = false,
+}) => {
   const [message, setMessage] = useState("");
 
   const onSubmit = () => {
@@ -28,6 +32,7 @@ export const TextInput: React.FC<TextInputProps> = ({ onSendMessage }) => {
       }}
     >
       <input
+        disabled={disabled}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -47,6 +52,7 @@ export const TextInput: React.FC<TextInputProps> = ({ onSendMessage }) => {
         value={message}
       />
       <button
+        disabled={disabled}
         onClick={onSubmit}
         style={{ color: "#434385", padding: "4px" }}
         type="button"

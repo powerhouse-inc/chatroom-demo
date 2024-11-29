@@ -9,6 +9,7 @@ const meta: Meta<typeof Reaction> = {
     textColor: { control: "color" },
     onClick: { action: "clicked" },
     reaction: { control: "object" },
+    disabled: { control: "boolean" },
   },
 };
 
@@ -19,6 +20,7 @@ export const Primary: Story = {
   args: {
     bgColor: "#7678ed",
     textColor: "black",
+    disabled: false,
     reaction: {
       type: "thumbsUp",
       emoji: "👍",

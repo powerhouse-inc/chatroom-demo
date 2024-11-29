@@ -13,6 +13,7 @@ const meta: Meta<typeof MessageItem> = {
     isCurrentUser: { control: "boolean" },
     onClickReaction: { action: "clicked" },
     imgUrl: { control: "text" },
+    disabled: { control: "boolean" },
   },
 };
 
@@ -22,6 +23,7 @@ type Story = StoryObj<typeof MessageItem>;
 export const Primary: Story = {
   args: {
     id: "0x1234567890abcdef",
+    disabled: false,
     message:
       "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
     userName: "0x1234567890abcdef",

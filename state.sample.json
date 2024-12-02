@@ -1,0 +1,35 @@
+{
+    "id": "OFs6F0wsN8hXdj/kkt8Bupg08OY=",
+    "name": "ChatRoom Name",
+    "description": "ChatRoom Description",
+    "createdAt": "2021-03-10T13:00:00.000Z",
+    "createdBy": "0xd8...6045",
+    "messages": [
+        {
+            "id": "ub/2bAQUt4sjJwUS7622lRkckD0=",
+            "content": "Hello World!",
+            "sentAt": "2021-03-10T13:00:00.000Z",
+            "sender": {
+                "id": "0xd8...6045",
+                "name": "vitalik.eth",
+                "avatarURL": "https://avatar.com/avatar.gif"
+            },
+            "reactions": [
+                {
+                    "type": "THUMBS_UP",
+                    "reactedBy": [
+                        "0xd8...6045",
+                        "0x4c...6b6B",
+                        "0x0f...4108"
+                    ]
+                },
+                {
+                    "type": "HEART",
+                    "reactedBy": [
+                        "0xd8...6045"
+                    ]
+                }
+            ]
+        }
+    ]
+}

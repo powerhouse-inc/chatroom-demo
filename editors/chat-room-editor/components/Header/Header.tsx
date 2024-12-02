@@ -1,34 +1,45 @@
+import { EditableLabel } from "./EditableLabel";
 export interface HeaderProps {
   title: string;
   description?: string;
+  onTitleSubmit?: (title: string) => void;
+  onDescriptionSubmit?: (description: string) => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ title, description }) => (
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-    }}
-  >
-    <h1
+export const Header: React.FC<HeaderProps> = ({
+  title,
+  description,
+  onTitleSubmit,
+  onDescriptionSubmit,
+}) => {
+  return (
+    <div
       style={{
-        fontSize: "18px",
-        fontWeight: "bold",
-        margin: 0,
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      {title}
-    </h1>
-    {description ? (
-      <p
+      <EditableLabel
+        label={title}
+        onSubmit={onTitleSubmit}
         style={{
-          fontSize: "14px",
-          color: "#666",
+          fontSize: "18px",
+          fontWeight: "bold",
           margin: 0,
         }}
-      >
-        {description}
-      </p>
-    ) : null}
-  </div>
-);
+      />
+      {description ? (
+        <EditableLabel
+          label={description}
+          onSubmit={onDescriptionSubmit}
+          style={{
+            minWidth: "200px",
+            fontSize: "14px",
+            color: "#666",
+            margin: 0,
+          }}
+        />
+      ) : null}
+    </div>
+  );
+};

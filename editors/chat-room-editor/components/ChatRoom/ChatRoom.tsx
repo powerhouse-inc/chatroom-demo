@@ -12,6 +12,8 @@ export interface ChatRoomProps {
   onClickReaction?: MessageProps["onClickReaction"];
   messages?: Omit<MessageItemProps, "onClickReaction">[];
   disabled?: boolean;
+  onSubmitTitle?: (title: string) => void;
+  onSubmitDescription?: (description: string) => void;
 }
 
 export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
@@ -21,6 +23,8 @@ export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
     description,
     disabled = false,
     messages = [],
+    onSubmitTitle,
+    onSubmitDescription,
     onClickReaction = () => {},
   } = props;
 
@@ -51,7 +55,12 @@ export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
       }}
     >
       <div>
-        <Header description={description} title={title} />
+        <Header
+          description={description}
+          onDescriptionSubmit={onSubmitDescription}
+          onTitleSubmit={onSubmitTitle}
+          title={title}
+        />
       </div>
       <div
         ref={messagesContainerRef}

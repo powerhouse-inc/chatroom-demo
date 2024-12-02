@@ -69,3 +69,11 @@ input RemoveEmojiReactionInput {
   senderId: ID!     # ID of the user that is removing the reaction
   type: ReactionType!   # Type of the reaction (emoji)
 }
+
+input EditChatNameInput {
+  name: String
+}
+
+input EditChatDescriptionInput {
+  description: String
+}

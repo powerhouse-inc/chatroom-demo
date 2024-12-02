@@ -5,9 +5,14 @@
  */
 
 import { ChatRoomAddMessageOperations } from "../../gen/add-message/operations";
+import { MessageContentCannotBeEmpty } from "../../gen/add-message/error";
 
 export const reducer: ChatRoomAddMessageOperations = {
   addMessageOperation(state, action, dispatch) {
+    if (action.input.content === "") {
+      throw new MessageContentCannotBeEmpty();
+    }
+
     state.messages.push({
       id: action.input.messageId,
       content: action.input.content,
@@ -79,5 +84,11 @@ export const reducer: ChatRoomAddMessageOperations = {
 
       return message;
     });
+  },
+  editChatNameOperation(state, action, dispatch) {
+    state.name = action.input.name || "";
+  },
+  editChatDescriptionOperation(state, action, dispatch) {
+    state.description = action.input.description || "";
   },
 };

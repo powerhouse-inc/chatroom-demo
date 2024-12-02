@@ -20,7 +20,22 @@ export type IProps = EditorProps<
 export default function Editor(props: IProps) {
   const disableChatRoom = !props.context.user;
 
+  const messages: ChatRoomProps["messages"] =
+    props.document.state.global.messages.map((message) => ({
+      id: message.id,
+      message: message.content || "",
+      timestamp: message.sentAt,
+      userName: message.sender.name || message.sender.id,
+      imgUrl: message.sender.avatarUrl || undefined,
+      isCurrentUser: message.sender.id === props.context.user?.address,
+      reactions: mapReactions(message.reactions),
+    }));
+
   const onSendMessage: ChatRoomProps["onSendMessage"] = (message) => {
+    if (!message) {
+      return;
+    }
+
     props.dispatch(
       actions.addMessage({
         messageId: documentModelUtils.hashKey(),
@@ -34,17 +49,6 @@ export default function Editor(props: IProps) {
       }),
     );
   };
-
-  const messages: ChatRoomProps["messages"] =
-    props.document.state.global.messages.map((message) => ({
-      id: message.id,
-      message: message.content || "",
-      timestamp: message.sentAt,
-      userName: message.sender.name || message.sender.id,
-      imgUrl: message.sender.avatarUrl || undefined,
-      isCurrentUser: message.sender.id === props.context.user?.address,
-      reactions: mapReactions(message.reactions),
-    }));
 
   const addReaction = (
     messageId: string,
@@ -102,6 +106,16 @@ export default function Editor(props: IProps) {
     }
   };
 
+  const onSubmitTitle: ChatRoomProps["onSubmitTitle"] = (title) => {
+    props.dispatch(actions.editChatName({ name: title }));
+  };
+
+  const onSubmitDescription: ChatRoomProps["onSubmitDescription"] = (
+    description,
+  ) => {
+    props.dispatch(actions.editChatDescription({ description }));
+  };
+
   return (
     <div
       style={{
@@ -116,6 +130,8 @@ export default function Editor(props: IProps) {
         messages={messages}
         onClickReaction={onClickReaction}
         onSendMessage={onSendMessage}
+        onSubmitDescription={onSubmitDescription}
+        onSubmitTitle={onSubmitTitle}
         title={props.document.state.global.name || "Chat Room Demo"}
       />
     </div>

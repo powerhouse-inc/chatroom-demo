@@ -12,6 +12,8 @@ import {
   AddMessageInput,
   AddEmojiReactionInput,
   RemoveEmojiReactionInput,
+  EditChatNameInput,
+  EditChatDescriptionInput,
 } from "../../gen/schema";
 import { reducer } from "../../gen/reducer";
 import * as creators from "../../gen/add-message/creators";
@@ -148,7 +150,42 @@ describe("AddMessage Operations", () => {
 
     expect(updatedDocument.state.global.messages[0].reactions).toHaveLength(1);
     expect(
-      updatedDocument.state.global.messages[0].reactions[0].reactedBy,
+      updatedDocument.state.global.messages[0].reactions?.[0]?.reactedBy,
     ).toHaveLength(0);
+  });
+
+  it("should handle editChatName operation", () => {
+    const input: EditChatNameInput = {
+      name: "New Chat Name",
+    };
+
+    const updatedDocument = reducer(document, creators.editChatName(input));
+
+    expect(updatedDocument.operations.global).toHaveLength(1);
+    expect(updatedDocument.operations.global[0].type).toBe("EDIT_CHAT_NAME");
+    expect(updatedDocument.operations.global[0].input).toStrictEqual(input);
+    expect(updatedDocument.operations.global[0].index).toEqual(0);
+
+    expect(updatedDocument.state.global.name).toBe(input.name);
+  });
+
+  it("should handle editChatDescription operation", () => {
+    const input: EditChatDescriptionInput = {
+      description: "New Chat Description",
+    };
+
+    const updatedDocument = reducer(
+      document,
+      creators.editChatDescription(input),
+    );
+
+    expect(updatedDocument.operations.global).toHaveLength(1);
+    expect(updatedDocument.operations.global[0].type).toBe(
+      "EDIT_CHAT_DESCRIPTION",
+    );
+    expect(updatedDocument.operations.global[0].input).toStrictEqual(input);
+    expect(updatedDocument.operations.global[0].index).toEqual(0);
+
+    expect(updatedDocument.state.global.description).toBe(input.description);
   });
 });

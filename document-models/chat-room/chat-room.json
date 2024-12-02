@@ -119,6 +119,28 @@
                             "errors": [],
                             "examples": [],
                             "scope": "global"
+                        },
+                        {
+                            "id": "ahnR3saK3aNIB8egY0kweHOLq1Q=",
+                            "name": "EDIT_CHAT_NAME",
+                            "description": "",
+                            "schema": "input EditChatNameInput {\n  name: String\n}",
+                            "template": "",
+                            "reducer": "",
+                            "errors": [],
+                            "examples": [],
+                            "scope": "global"
+                        },
+                        {
+                            "id": "JFCUK2ZFrAqThLf7+nl+h8QXutQ=",
+                            "name": "EDIT_CHAT_DESCRIPTION",
+                            "description": "",
+                            "schema": "input EditChatDescriptionInput {\n  description: String\n}",
+                            "template": "",
+                            "reducer": "",
+                            "errors": [],
+                            "examples": [],
+                            "scope": "global"
                         }
                     ]
                 }

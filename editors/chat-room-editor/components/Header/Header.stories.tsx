@@ -7,6 +7,8 @@ const meta: Meta<typeof Header> = {
   argTypes: {
     title: { control: "text" },
     description: { control: "text" },
+    onTitleSubmit: { action: "onTitleSubmit" },
+    onDescriptionSubmit: { action: "onDescriptionSubmit" },
   },
 };
 
@@ -17,5 +19,8 @@ export const Primary: Story = {
   args: {
     title: "Chat Room",
     description: "Welcome to the chat room",
+    onTitleSubmit: (title: string) => console.log("Submitted title:", title),
+    onDescriptionSubmit: (description: string) =>
+      console.log("Submitted description:", description),
   },
 };

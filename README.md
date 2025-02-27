@@ -1,7 +1,9 @@
 # ChatRoom Document Model Demo
 
-This repo is mostly orientated towards the tutorial demo of building a chatroom as a document model. 
-The tutorial can be followed here: https://staging.powerhouse.academy/docs/category/chatroom
+This repo is orientated towards the tutorial demo of building a chatroom as a document model. 
+The tutorial can be followed here with this repository as a reference: https://staging.powerhouse.academy/docs/category/chatroom
+
+Alternatively you can follow the steps underneath to see the chatroom demo at work in Connect Studio
 
 ## Getting Started:
 

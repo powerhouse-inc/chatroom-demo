@@ -1,1 +1,1 @@
-export * from "./TextInput";
+export { TextInput, type TextInputProps } from "./TextInput.js";

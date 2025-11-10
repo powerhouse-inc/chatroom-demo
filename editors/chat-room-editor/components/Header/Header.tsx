@@ -1,4 +1,5 @@
-import { EditableLabel } from "./EditableLabel";
+import { EditableLabel } from "./EditableLabel.js";
+
 export interface HeaderProps {
   title: string;
   description?: string;

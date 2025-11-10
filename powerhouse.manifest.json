@@ -1,0 +1,27 @@
+{
+    "name": "",
+    "description": "",
+    "category": "",
+    "publisher": {
+        "name": "",
+        "url": ""
+    },
+    "documentModels": [
+        {
+            "id": "powerhouse/chat-room",
+            "name": "ChatRoom"
+        }
+    ],
+    "editors": [
+        {
+            "id": "chat-room-editor",
+            "name": "chat-room-editor",
+            "documentTypes": [
+                "powerhouse/chat-room"
+            ]
+        }
+    ],
+    "apps": [],
+    "subgraphs": [],
+    "importScripts": []
+}

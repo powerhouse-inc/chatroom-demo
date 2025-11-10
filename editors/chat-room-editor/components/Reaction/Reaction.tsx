@@ -1,6 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
-import React from "react";
-
 export type ReactionType = {
   type: string;
   emoji: string;

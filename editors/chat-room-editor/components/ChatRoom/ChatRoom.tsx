@@ -1,8 +1,10 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import { Header } from "../Header";
-import { TextInput } from "../TextInput";
-import { MessageItem, MessageItemProps } from "../MessageItem";
-import { MessageProps } from "../Message";
+import { Header } from "../Header/Header.js";
+import { TextInput } from "../TextInput/TextInput.js";
+import {
+  MessageItem,
+  type MessageItemProps,
+} from "../MessageItem/MessageItem.js";
+import type { MessageProps } from "../Message/Message.js";
 import { useRef, useEffect } from "react";
 
 export interface ChatRoomProps {

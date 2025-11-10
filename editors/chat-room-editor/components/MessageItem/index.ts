@@ -1,1 +1,5 @@
-export * from "./MessageItem";
+export {
+  MessageItem,
+  type MessageItemProps,
+  reactionMap,
+} from "./MessageItem.js";

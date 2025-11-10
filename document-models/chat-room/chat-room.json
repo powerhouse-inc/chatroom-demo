@@ -1,150 +1,115 @@
 {
+    "author": {
+        "name": "Powerhouse",
+        "website": "https://www.powerhouse.inc/"
+    },
+    "description": "A chat room document model for managing messages and reactions",
+    "extension": "phcr",
     "id": "powerhouse/chat-room",
     "name": "ChatRoom",
-    "extension": "",
-    "description": "",
-    "author": {
-        "name": "",
-        "website": ""
-    },
     "specifications": [
         {
-            "version": 1,
             "changeLog": [],
-            "state": {
-                "global": {
-                    "schema": "type ChatRoomState {\n  id: OID!                    # Unique identifier for the chat-room\n  name: String!               # Name of the chat-room\n  description: String         # Optional description of the chat-room\n  createdAt: DateTime!        # Timestamp of when the chat-room was created\n  createdBy: ID!             # Agent ID of the user who created the chat-room\n  messages: [Message!]!       # List of messages in the chat-room\n}\n\ntype Message {\n  id: OID!                    # Unique identifier for the message\n  sender: Sender!              # Agent details of the message sender\n  content: String             # Message content\n  sentAt: DateTime!           # Timestamp of when the message was sent\n  reactions: [Reaction!]      # Reactions to the message\n}\n\ntype Sender {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}\n\ntype Reaction {\n  type: ReactionType!         # Type of reaction (one of the predefined emoji)\n  reactedBy: [ID!]!             # Agent ID of the user who reacted\n}\n\nenum ReactionType {\n  THUMBS_UP\n  THUMBS_DOWN\n  LAUGH\n  HEART\n  CRY\n}\n",
-                    "initialValue": "{\n  \"id\": \"\",\n  \"name\": \"\",\n  \"description\": \"\",\n  \"createdAt\": \"2024-11-27T09:17:45.998Z\",\n  \"createdBy\": \"\",\n  \"messages\": []\n}",
-                    "examples": []
-                },
-                "local": {
-                    "schema": "",
-                    "initialValue": "",
-                    "examples": []
-                }
-            },
             "modules": [
                 {
-                    "id": "pI2axWEMqGs3K6HXTR+q/KwLxSg=",
-                    "name": "add_message",
-                    "description": "",
+                    "description": "Operations for managing chat messages",
+                    "id": "messages",
+                    "name": "messages",
                     "operations": [
                         {
-                            "id": "ZiVRr2Y3GKa0R6bVZufVIgI5IW4=",
+                            "description": "Add a new message to the chat room",
+                            "errors": [
+                                {
+                                    "code": "MESSAGE_CONTENT_CANNOT_BE_EMPTY",
+                                    "description": "Message content cannot be empty",
+                                    "id": "message-content-empty",
+                                    "name": "MessageContentCannotBeEmptyError",
+                                    "template": ""
+                                }
+                            ],
+                            "examples": [],
+                            "id": "add-message",
                             "name": "ADD_MESSAGE",
-                            "description": "A message is created and sent to the chat-room. ",
-                            "schema": "input AddMessageInput {\n  messageId: OID!        # ID of the message that is being added\n  sender: Sender!          # ID of the user sending the message\n  content: String!        # Content of the message\n  sentAt: DateTime!\n}",
-                            "template": "",
-                            "reducer": "",
+                            "reducer": "if (action.input.content === \"\") {\n  throw new MessageContentCannotBeEmptyError();\n}\n\nconst newMessage = {\n  id: action.input.messageId,\n  sender: {\n    id: action.input.sender.id,\n    name: action.input.sender.name || null,\n    avatarUrl: action.input.sender.avatarUrl || null,\n  },\n  content: action.input.content,\n  sentAt: action.input.sentAt,\n  reactions: [],\n};\n\nstate.messages.push(newMessage);",
+                            "schema": "input AddMessageInput {\n  messageId: OID!\n  sender: SenderInput!\n  content: String!\n  sentAt: DateTime!\n}\n\ninput SenderInput {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}",
+                            "scope": "global",
+                            "template": "Add a new message to the chat room"
+                        },
+                        {
+                            "description": "Add an emoji reaction to a message",
                             "errors": [
                                 {
-                                    "id": "BQlJXztnelHuTVTgrwZ4n+1/5v8=",
-                                    "name": "MessageContentCannotBeEmpty",
-                                    "code": "",
-                                    "description": "",
-                                    "template": ""
-                                },
-                                {
-                                    "id": "kz5yjvp2fsU1AS4IgUBW9az2YcI=",
-                                    "name": "MessageContentExceedsTheMaximumLength",
-                                    "code": "",
-                                    "description": "",
-                                    "template": ""
-                                },
-                                {
-                                    "id": "Pdocy7E4XFEXvsFFZkYqyEZDezE=",
-                                    "name": "ChatRoomIsLocked",
-                                    "code": "",
-                                    "description": "",
-                                    "template": ""
-                                },
-                                {
-                                    "id": "8KeHMLYn6boS8vuq1JRfUyVjReI=",
-                                    "name": "FloodProtectionTooManyMessagesSentByTheUserInAShortTime",
-                                    "code": "",
-                                    "description": "",
-                                    "template": ""
-                                },
-                                {
-                                    "id": "H31CcOVmpZp+axRQW4GVIa+K1vU=",
-                                    "name": "BlockedSender",
-                                    "code": "",
-                                    "description": "",
+                                    "code": "MESSAGE_NOT_FOUND",
+                                    "description": "The specified message does not exist",
+                                    "id": "message-not-found",
+                                    "name": "MessageNotFoundError",
                                     "template": ""
                                 }
                             ],
                             "examples": [],
-                            "scope": "global"
-                        },
-                        {
-                            "id": "gVeRecdrNSqRuGNz85UbciPUUk8=",
+                            "id": "add-emoji-reaction",
                             "name": "ADD_EMOJI_REACTION",
-                            "description": "Chat-room participant can react to the added messages. ",
-                            "schema": "input AddEmojiReactionInput {\n  messageId: OID!         # ID of the message to which the reaction is being added\n  reactedBy: ID!         # ID of the user adding the reaction\n  type: ReactionType!     # Type of the reaction (emoji)\n}",
-                            "template": "",
-                            "reducer": "",
-                            "errors": [
-                                {
-                                    "id": "+lvFo73nnDZMgSSeOf6Y2RXkOJ0=",
-                                    "name": "ReactingToADeletedMessage",
-                                    "code": "",
-                                    "description": "",
-                                    "template": ""
-                                },
-                                {
-                                    "id": "x+OXYVPMZvbCcWiHq5mMjtTwg9k=",
-                                    "name": "ReactingToAMessageInAClosedThread",
-                                    "code": "",
-                                    "description": "",
-                                    "template": ""
-                                },
-                                {
-                                    "id": "IWE5enoV0M6D701UZFovpNnzFVA=",
-                                    "name": "UserBlockedByTheMessageSender",
-                                    "code": "",
-                                    "description": "",
-                                    "template": ""
-                                }
-                            ],
-                            "examples": [],
-                            "scope": "global"
+                            "reducer": "const message = state.messages.find(m => m.id === action.input.messageId);\nif (!message) {\n  throw new MessageNotFoundError(`Message with ID ${action.input.messageId} not found`);\n}\n\nif (!message.reactions) {\n  message.reactions = [];\n}\n\nconst existingReaction = message.reactions.find(r => r.type === action.input.type);\n\nif (existingReaction) {\n  if (!existingReaction.reactedBy.includes(action.input.reactedBy)) {\n    existingReaction.reactedBy.push(action.input.reactedBy);\n  }\n} else {\n  message.reactions.push({\n    type: action.input.type,\n    reactedBy: [action.input.reactedBy]\n  });\n}",
+                            "schema": "input AddEmojiReactionInput {\n  messageId: OID!\n  reactedBy: ID!\n  type: ReactionType!\n}",
+                            "scope": "global",
+                            "template": "Add an emoji reaction to a message"
                         },
                         {
-                            "id": "DKcvwDzXCaV1QMIMr5xXfBzInCg=",
+                            "description": "Remove an emoji reaction from a message",
+                            "errors": [],
+                            "examples": [],
+                            "id": "remove-emoji-reaction",
                             "name": "REMOVE_EMOJI_REACTION",
-                            "description": "",
-                            "schema": "input RemoveEmojiReactionInput {\n  messageId: OID!   # ID of the message to which the reaction is being removed\n  senderId: ID!     # ID of the user that is removing the reaction\n  type: ReactionType!   # Type of the reaction (emoji)\n}",
-                            "template": "",
-                            "reducer": "",
+                            "reducer": "const message = state.messages.find(m => m.id === action.input.messageId);\nif (!message) {\n  throw new MessageNotFoundError(`Message with ID ${action.input.messageId} not found`);\n}\n\nif (!message.reactions) {\n  return;\n}\n\nconst reactionIndex = message.reactions.findIndex(r => r.type === action.input.type);\nif (reactionIndex === -1) {\n  return;\n}\n\nconst reaction = message.reactions[reactionIndex];\nconst userIndex = reaction.reactedBy.indexOf(action.input.senderId);\n\nif (userIndex !== -1) {\n  reaction.reactedBy.splice(userIndex, 1);\n  \n  if (reaction.reactedBy.length === 0) {\n    message.reactions.splice(reactionIndex, 1);\n  }\n}",
+                            "schema": "input RemoveEmojiReactionInput {\n  messageId: OID!\n  senderId: ID!\n  type: ReactionType!\n}",
+                            "scope": "global",
+                            "template": "Remove an emoji reaction from a message"
+                        }
+                    ]
+                },
+                {
+                    "description": "Operations for managing chat room settings",
+                    "id": "settings",
+                    "name": "settings",
+                    "operations": [
+                        {
+                            "description": "Update the chat room name",
                             "errors": [],
                             "examples": [],
-                            "scope": "global"
-                        },
-                        {
-                            "id": "ahnR3saK3aNIB8egY0kweHOLq1Q=",
+                            "id": "edit-chat-name",
                             "name": "EDIT_CHAT_NAME",
-                            "description": "",
+                            "reducer": "state.name = action.input.name || \"\";",
                             "schema": "input EditChatNameInput {\n  name: String\n}",
-                            "template": "",
-                            "reducer": "",
-                            "errors": [],
-                            "examples": [],
-                            "scope": "global"
+                            "scope": "global",
+                            "template": "Update the chat room name"
                         },
                         {
-                            "id": "JFCUK2ZFrAqThLf7+nl+h8QXutQ=",
-                            "name": "EDIT_CHAT_DESCRIPTION",
-                            "description": "",
-                            "schema": "input EditChatDescriptionInput {\n  description: String\n}",
-                            "template": "",
-                            "reducer": "",
+                            "description": "Update the chat room description",
                             "errors": [],
                             "examples": [],
-                            "scope": "global"
+                            "id": "edit-chat-description",
+                            "name": "EDIT_CHAT_DESCRIPTION",
+                            "reducer": "state.description = action.input.description || \"\";",
+                            "schema": "input EditChatDescriptionInput {\n  description: String\n}",
+                            "scope": "global",
+                            "template": "Update the chat room description"
                         }
                     ]
                 }
-            ]
+            ],
+            "state": {
+                "global": {
+                    "examples": [],
+                    "initialValue": "{\n  \"id\": \"\",\n  \"name\": \"\",\n  \"description\": null,\n  \"createdAt\": null,\n  \"createdBy\": null,\n  \"messages\": []\n}",
+                    "schema": "type ChatRoomState {\n  id: OID!\n  name: String!\n  description: String\n  createdAt: DateTime\n  createdBy: ID\n  messages: [Message!]!\n}\n\ntype Message {\n  id: OID!\n  sender: Sender!\n  content: String\n  sentAt: DateTime!\n  reactions: [Reaction!]\n}\n\ntype Sender {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}\n\ntype Reaction {\n  type: ReactionType!\n  reactedBy: [ID!]!\n}\n\nenum ReactionType {\n  THUMBS_UP\n  THUMBS_DOWN\n  LAUGH\n  HEART\n  CRY\n}"
+                },
+                "local": {
+                    "examples": [],
+                    "initialValue": "",
+                    "schema": ""
+                }
+            },
+            "version": 1
         }
     ]
 }

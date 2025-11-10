@@ -1,10 +1,16 @@
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/jsx-max-depth */
-import { ReactionType, Reaction } from "../Reaction";
+import { Reaction, type ReactionType } from "../Reaction/Reaction.js";
 
 export interface MessageReaction extends Omit<ReactionType, "quantity"> {
   messageId: string;
 }
+
+export type ReactionMap = {
+  cry: string;
+  laughing: string;
+  heart: string;
+  thumbsDown: string;
+  thumbsUp: string;
+};
 
 export interface MessageProps {
   id: string;

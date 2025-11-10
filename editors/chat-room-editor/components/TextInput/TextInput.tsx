@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-no-bind */
 import { useState } from "react";
-import { SendIcon } from "./SendIcon";
+import { SendIcon } from "./SendIcon.js";
 
 export interface TextInputProps {
   onSendMessage: (message: string) => void;

@@ -1,4 +1,4 @@
-import { getEmojiFromString } from "../../utils";
+import { getEmojiFromString } from "../../utils.js";
 
 export interface AvatarProps {
   imgUrl?: string;

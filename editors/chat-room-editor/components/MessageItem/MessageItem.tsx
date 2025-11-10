@@ -1,8 +1,5 @@
-/* eslint-disable react/jsx-max-depth */
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/jsx-props-no-spreading */
-import { Message, MessageProps } from "../Message";
-import { Avatar, AvatarProps } from "../Avatar";
+import { Message, type MessageProps } from "../Message/Message.js";
+import { Avatar, type AvatarProps } from "../Avatar/Avatar.js";
 import { useState } from "react";
 import {
   DropdownMenu,

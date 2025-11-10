@@ -1,1 +1,1 @@
-export * from  "./Header";
+export { Header, type HeaderProps } from "./Header.js";

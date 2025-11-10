@@ -1,1 +1,1 @@
-export * from "./ChatRoom";
+export { ChatRoom, type ChatRoomProps } from "./ChatRoom.js";

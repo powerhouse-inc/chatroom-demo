@@ -1,33 +1,38 @@
-/* eslint-disable react/jsx-no-bind */
-import { EditorProps } from "document-model/document";
+import { generateId } from "document-model/core";
+import { useUser } from "@powerhousedao/reactor-browser/connect";
+import { useSelectedChatRoomDocument } from "../../document-models/chat-room/hooks.js";
 import {
-  ChatRoomState,
-  ChatRoomAction,
-  ChatRoomLocalState,
-  ReactionType,
-  actions,
-} from "../../document-models/chat-room";
-import { utils as documentModelUtils } from "document-model/document";
-import { ChatRoom, ChatRoomProps, MessageProps } from "./components";
-import { reactionKeyToReactionType, mapReactions } from "./utils";
+  addMessage,
+  addEmojiReaction,
+  removeEmojiReaction,
+  editChatName,
+  editChatDescription,
+} from "../../document-models/chat-room/gen/creators.js";
+import {
+  ChatRoom,
+  type ChatRoomProps,
+  type MessageProps,
+} from "./components/index.js";
+import { reactionKeyToReactionType, mapReactions } from "./utils.js";
 
-export type IProps = EditorProps<
-  ChatRoomState,
-  ChatRoomAction,
-  ChatRoomLocalState
->;
+export default function Editor() {
+  const [document, dispatch] = useSelectedChatRoomDocument();
+  const user = useUser();
 
-export default function Editor(props: IProps) {
-  const disableChatRoom = !props.context.user;
+  const disableChatRoom = !user;
+
+  if (!document) {
+    return <div>Loading...</div>;
+  }
 
   const messages: ChatRoomProps["messages"] =
-    props.document.state.global.messages.map((message) => ({
+    document.state.global.messages.map((message) => ({
       id: message.id,
       message: message.content || "",
       timestamp: message.sentAt,
       userName: message.sender.name || message.sender.id,
       imgUrl: message.sender.avatarUrl || undefined,
-      isCurrentUser: message.sender.id === props.context.user?.address,
+      isCurrentUser: message.sender.id === user?.address,
       reactions: mapReactions(message.reactions),
     }));
 
@@ -36,14 +41,14 @@ export default function Editor(props: IProps) {
       return;
     }
 
-    props.dispatch(
-      actions.addMessage({
-        messageId: documentModelUtils.hashKey(),
+    dispatch(
+      addMessage({
+        messageId: generateId(),
         content: message,
         sender: {
-          id: props.context.user?.address || "anon-user",
-          name: props.context.user?.ens?.name || null,
-          avatarUrl: props.context.user?.ens?.avatarUrl || null,
+          id: user?.address || "anon-user",
+          name: user?.ens?.name || null,
+          avatarUrl: user?.ens?.avatarUrl || null,
         },
         sentAt: new Date().toISOString(),
       }),
@@ -53,10 +58,10 @@ export default function Editor(props: IProps) {
   const addReaction = (
     messageId: string,
     userId: string,
-    reactionType: ReactionType,
+    reactionType: "HEART" | "THUMBS_UP" | "THUMBS_DOWN" | "LAUGH" | "CRY",
   ) => {
-    props.dispatch(
-      actions.addEmojiReaction({
+    dispatch(
+      addEmojiReaction({
         messageId,
         reactedBy: userId,
         type: reactionType,
@@ -67,10 +72,10 @@ export default function Editor(props: IProps) {
   const removeReaction = (
     messageId: string,
     userId: string,
-    reactionType: ReactionType,
+    reactionType: "HEART" | "THUMBS_UP" | "THUMBS_DOWN" | "LAUGH" | "CRY",
   ) => {
-    props.dispatch(
-      actions.removeEmojiReaction({
+    dispatch(
+      removeEmojiReaction({
         messageId,
         senderId: userId,
         type: reactionType,
@@ -89,7 +94,7 @@ export default function Editor(props: IProps) {
 
     const messageId = reaction.messageId;
     const reactionType = reactionKeyToReactionType(reaction.type);
-    const currentUserId = props.context.user?.address || "anon-user";
+    const currentUserId = user?.address || "anon-user";
 
     const existingReaction = message.reactions?.find(
       (r) => r.type === reaction.type,
@@ -107,13 +112,13 @@ export default function Editor(props: IProps) {
   };
 
   const onSubmitTitle: ChatRoomProps["onSubmitTitle"] = (title) => {
-    props.dispatch(actions.editChatName({ name: title }));
+    dispatch(editChatName({ name: title }));
   };
 
   const onSubmitDescription: ChatRoomProps["onSubmitDescription"] = (
     description,
   ) => {
-    props.dispatch(actions.editChatDescription({ description }));
+    dispatch(editChatDescription({ description }));
   };
 
   return (
@@ -124,7 +129,7 @@ export default function Editor(props: IProps) {
     >
       <ChatRoom
         description={
-          props.document.state.global.description || "This is a chat room demo"
+          document.state.global.description || "This is a chat room demo"
         }
         disabled={disableChatRoom}
         messages={messages}
@@ -132,7 +137,7 @@ export default function Editor(props: IProps) {
         onSendMessage={onSendMessage}
         onSubmitDescription={onSubmitDescription}
         onSubmitTitle={onSubmitTitle}
-        title={props.document.state.global.name || "Chat Room Demo"}
+        title={document.state.global.name || "Chat Room Demo"}
       />
     </div>
   );

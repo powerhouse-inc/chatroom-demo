@@ -1,9 +1,16 @@
 {
-  "name": "chatroom-package",
+  "name": "@powerhousedao/chatroom-package",
   "description": "",
   "version": "1.0.0",
   "license": "AGPL-3.0-only",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/powerhouse-inc/chatroom-demo"
+  },
   "files": [
     "/dist"
   ],

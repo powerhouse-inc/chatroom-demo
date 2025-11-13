@@ -1,7 +1,7 @@
 {
   "name": "@powerhousedao/chatroom-package",
   "description": "",
-  "version": "1.0.0-dev.0",
+  "version": "1.0.0-staging.0",
   "license": "AGPL-3.0-only",
   "type": "module",
   "publishConfig": {

@@ -1,10 +1,10 @@
 {
-    "name": "",
-    "description": "",
-    "category": "",
+    "name": "chatroom-package",
+    "description": "A chat room demo package for the Powerhouse ecosystem",
+    "category": "Productivity",
     "publisher": {
-        "name": "",
-        "url": ""
+        "name": "Powerhouse",
+        "url": "https://www.powerhouse.inc/"
     },
     "documentModels": [
         {

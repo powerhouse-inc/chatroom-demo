@@ -15,7 +15,7 @@ import {
   AddEmojiReactionInputSchema,
   removeEmojiReaction,
   RemoveEmojiReactionInputSchema,
-} from "chatroom-package/document-models/chat-room";
+} from "@powerhousedao/chatroom-package/document-models/chat-room";
 
 describe("Messages Operations", () => {
   it("should handle addMessage operation", () => {

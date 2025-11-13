@@ -4,7 +4,7 @@ import { setName } from "document-model";
 import {
   actions,
   chatRoomDocumentType,
-} from "chatroom-package/document-models/chat-room";
+} from "@powerhousedao/chatroom-package/document-models/chat-room";
 
 import type {
   ChatRoomDocument,
@@ -13,7 +13,7 @@ import type {
   RemoveEmojiReactionInput,
   EditChatNameInput,
   EditChatDescriptionInput,
-} from "chatroom-package/document-models/chat-room";
+} from "@powerhousedao/chatroom-package/document-models/chat-room";
 
 export const getResolvers = (
   subgraph: BaseSubgraph,

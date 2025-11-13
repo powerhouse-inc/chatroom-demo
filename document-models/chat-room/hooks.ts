@@ -8,7 +8,7 @@ import {
 import type {
   ChatRoomDocument,
   ChatRoomAction,
-} from "chatroom-package/document-models/chat-room";
+} from "@powerhousedao/chatroom-package/document-models/chat-room";
 import { isChatRoomDocument } from "./gen/document-schema.js";
 
 /** Hook to get a ChatRoom document by its id */

@@ -13,7 +13,7 @@ import {
   EditChatNameInputSchema,
   editChatDescription,
   EditChatDescriptionInputSchema,
-} from "chatroom-package/document-models/chat-room";
+} from "@powerhousedao/chatroom-package/document-models/chat-room";
 
 describe("Settings Operations", () => {
   it("should handle editChatName operation", () => {

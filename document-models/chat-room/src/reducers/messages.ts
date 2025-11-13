@@ -2,7 +2,7 @@ import {
   MessageNotFoundError,
   MessageContentCannotBeEmptyError,
 } from "../../gen/messages/error.js";
-import type { ChatRoomMessagesOperations } from "chatroom-package/document-models/chat-room";
+import type { ChatRoomMessagesOperations } from "@powerhousedao/chatroom-package/document-models/chat-room";
 
 export const chatRoomMessagesOperations: ChatRoomMessagesOperations = {
   addMessageOperation(state, action) {

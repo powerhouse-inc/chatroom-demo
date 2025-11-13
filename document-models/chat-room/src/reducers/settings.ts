@@ -1,4 +1,4 @@
-import type { ChatRoomSettingsOperations } from "chatroom-package/document-models/chat-room";
+import type { ChatRoomSettingsOperations } from "@powerhousedao/chatroom-package/document-models/chat-room";
 
 export const chatRoomSettingsOperations: ChatRoomSettingsOperations = {
   editChatNameOperation(state, action) {

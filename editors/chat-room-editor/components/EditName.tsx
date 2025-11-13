@@ -1,7 +1,7 @@
 import { setName } from "document-model";
 import type { FormEventHandler, MouseEventHandler } from "react";
 import { useState } from "react";
-import { useSelectedChatRoomDocument } from "chatroom-package/document-models/chat-room";
+import { useSelectedChatRoomDocument } from "@powerhousedao/chatroom-package/document-models/chat-room";
 
 /** Displays the name of the selected ChatRoom document and allows editing it */
 export function EditChatRoomName() {

@@ -17,7 +17,7 @@ import {
   assertIsChatRoomDocument,
   isChatRoomState,
   assertIsChatRoomState,
-} from "chatroom-package/document-models/chat-room";
+} from "@powerhousedao/chatroom-package/document-models/chat-room";
 import { ZodError } from "zod";
 
 describe("ChatRoom Document Model", () => {

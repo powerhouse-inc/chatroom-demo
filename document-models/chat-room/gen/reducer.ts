@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { ChatRoomPHState } from "chatroom-package/document-models/chat-room";
+import type { ChatRoomPHState } from "@powerhousedao/chatroom-package/document-models/chat-room";
 
 import { chatRoomMessagesOperations } from "../src/reducers/messages.js";
 import { chatRoomSettingsOperations } from "../src/reducers/settings.js";

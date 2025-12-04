@@ -1,0 +1,115 @@
+import type { DocumentModelGlobalState } from "document-model";
+
+export const documentModel: DocumentModelGlobalState = {
+  id: "powerhouse/chat-room",
+  name: "ChatRoom",
+  extension: "",
+  description: "",
+  author: {
+    name: "",
+    website: "",
+  },
+  specifications: [
+    {
+      version: 1,
+      changeLog: [],
+      state: {
+        global: {
+          schema:
+            "# The state of our ChatRoom\ntype ChatRoomState {\n  id: OID!              # Unique identifier for the chat-room\n  name: String!         # Name of the chat-room\n  description: String   # Optional description of the chat-room\n  createdAt: DateTime!  # Timestamp of when the chat-room was created\n  createdBy: ID!        # Agent ID of the user who created the chat-room\n  messages: [Message!]! # List of messages in the chat-room\n}\n\n# A single message in the chat-room\ntype Message {\n  id: OID!              # Unique identifier for the message\n  sender: Sender!       # Agent details of the message sender\n  content: String       # Message content\n  sentAt: DateTime!     # Timestamp of when the message was sent\n  reactions: [Reaction!] # Reactions to the message\n}\n\n# The sender of a message\ntype Sender {\n  id: ID!               # Unique identifier for the sender\n  name: String\n  avatarUrl: URL        # Allows us to pull the ENS and/or NFT of the person's profile\n}\n\n# A reaction to a message\ntype Reaction {\n  type: ReactionType!   # Type of reaction (one of the predefined emoji)\n  reactedBy: [ID!]!     # Agent IDs of users who reacted\n}\n\n# The predefined emoji reactions\nenum ReactionType {\n  THUMBS_UP\n  THUMBS_DOWN\n  LAUGH\n  HEART\n  CRY\n}",
+          initialValue:
+            '"{\\n  \\"name\\": \\"\\",\\n  \\"description\\": null,\\n  \\"createdBy\\": \\"placeholder-id\\",\\n  \\"messages\\": []\\n}"',
+          examples: [],
+        },
+        local: {
+          schema: "",
+          initialValue: '""',
+          examples: [],
+        },
+      },
+      modules: [
+        {
+          id: "49bcf425-0c43-491f-b6b2-e8a35346616f",
+          name: "general_operations",
+          description: "",
+          operations: [
+            {
+              id: "d53a23cb-be78-446d-b73a-39b3b77c9a97",
+              name: "ADD_MESSAGE",
+              description: "",
+              schema:
+                "   input AddMessageInput {\n     messageId: OID!\n     sender: SenderInput!\n     content: String!\n     sentAt: DateTime!\n   }\n\ninput SenderInput {\n     id: ID!\n     name: String\n     avatarUrl: URL\n   }",
+              template: "",
+              reducer: "",
+              errors: [
+                {
+                  id: "59b90b8f-51c9-4934-80b5-c0d923b2ebbb",
+                  name: "MessageContentCannotBeEmpty",
+                  code: "MessageContentCannotBeEmpty",
+                  description: "",
+                  template: "",
+                },
+                {
+                  id: "529f4955-ac7b-49e0-9c57-3f7e4c18b697",
+                  name: "MessageContentExceedsTheMaximumLength",
+                  code: "MessageContentExceedsTheMaximumLength",
+                  description: "",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "2dba85d3-79fa-42fc-be66-dbc32928f60a",
+              name: "ADD_EMOJI_REACTION",
+              description: "",
+              schema:
+                "input AddEmojiReactionInput {\n  messageId: OID!       # ID of the message to react to\n  reactedBy: ID!        # ID of the user adding the reaction\n  type: ReactionType!   # Type of the reaction (emoji)\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "dcdbcc37-7e7f-4949-93d7-e8340b42fe8e",
+              name: "REMOVE_EMOJI_REACTION",
+              description: "",
+              schema:
+                "input RemoveEmojiReactionInput {\n  messageId: OID!       # ID of the message to remove reaction from\n  senderId: ID!         # ID of the user removing the reaction\n  type: ReactionType!   # Type of the reaction (emoji)\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "2a4e6c8d-ea26-4a29-b0b8-1cac24c0c912",
+              name: "EDIT_CHAT_NAME",
+              description: "",
+              schema: "input EditChatNameInput {\n  name: String\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "ee258f95-fdab-4574-bfc1-0bf001fa26a8",
+              name: "EDIT_CHAT_DESCRIPTION",
+              description: "",
+              schema:
+                "input EditChatDescriptionInput {\n  description: String\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};

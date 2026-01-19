@@ -11,6 +11,7 @@ import {
 
 /** Document model module for the Todo List document type */
 export const ChatRoom: DocumentModelModule<ChatRoomPHState> = {
+  version: 1,
   reducer,
   actions,
   utils,

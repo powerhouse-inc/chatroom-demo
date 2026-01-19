@@ -1,4 +1,4 @@
-import { type Action } from "document-model";
+import type { Action } from "document-model";
 import type { EditChatNameInput, EditChatDescriptionInput } from "../types.js";
 
 export type EditChatNameAction = Action & {

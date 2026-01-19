@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 import type {
   AddEmojiReactionInput,
   AddMessageInput,
@@ -14,7 +14,7 @@ import type {
 } from "./types.js";
 
 type Properties<T> = Required<{
-  [K in keyof T]: z.ZodType<T[K], any, T[K]>;
+  [K in keyof T]: z.ZodType<T[K]>;
 }>;
 
 type definedNonNullAny = {};
@@ -58,11 +58,11 @@ export function AddMessageInputSchema(): z.ZodObject<
 export function ChatRoomStateSchema(): z.ZodObject<Properties<ChatRoomState>> {
   return z.object({
     __typename: z.literal("ChatRoomState").optional(),
-    createdAt: z.string().datetime().nullable(),
-    createdBy: z.string().nullable(),
-    description: z.string().nullable(),
+    createdAt: z.string().datetime().nullish(),
+    createdBy: z.string().nullish(),
+    description: z.string().nullish(),
     id: z.string(),
-    messages: z.array(MessageSchema()),
+    messages: z.array(z.lazy(() => MessageSchema())),
     name: z.string(),
   });
 }
@@ -86,10 +86,10 @@ export function EditChatNameInputSchema(): z.ZodObject<
 export function MessageSchema(): z.ZodObject<Properties<Message>> {
   return z.object({
     __typename: z.literal("Message").optional(),
-    content: z.string().nullable(),
+    content: z.string().nullish(),
     id: z.string(),
-    reactions: z.array(ReactionSchema()).nullable(),
-    sender: SenderSchema(),
+    reactions: z.array(z.lazy(() => ReactionSchema())).nullish(),
+    sender: z.lazy(() => SenderSchema()),
     sentAt: z.string().datetime(),
   });
 }
@@ -115,9 +115,9 @@ export function RemoveEmojiReactionInputSchema(): z.ZodObject<
 export function SenderSchema(): z.ZodObject<Properties<Sender>> {
   return z.object({
     __typename: z.literal("Sender").optional(),
-    avatarUrl: z.string().url().nullable(),
+    avatarUrl: z.string().url().nullish(),
     id: z.string(),
-    name: z.string().nullable(),
+    name: z.string().nullish(),
   });
 }
 

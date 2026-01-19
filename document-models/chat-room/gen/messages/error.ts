@@ -24,10 +24,6 @@ export class MessageNotFoundError extends Error implements ReducerError {
 }
 
 export const errors = {
-  AddMessage: {
-    MessageContentCannotBeEmptyError,
-  },
-  AddEmojiReaction: {
-    MessageNotFoundError,
-  },
+  AddMessage: { MessageContentCannotBeEmptyError },
+  AddEmojiReaction: { MessageNotFoundError },
 };

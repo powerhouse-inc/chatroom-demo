@@ -1,10 +1,10 @@
 import { type SignalDispatch } from "document-model";
-import {
-  type AddMessageAction,
-  type AddEmojiReactionAction,
-  type RemoveEmojiReactionAction,
+import type {
+  AddMessageAction,
+  AddEmojiReactionAction,
+  RemoveEmojiReactionAction,
 } from "./actions.js";
-import { type ChatRoomState } from "../types.js";
+import type { ChatRoomState } from "../types.js";
 
 export interface ChatRoomMessagesOperations {
   addMessageOperation: (

@@ -3,6 +3,7 @@ import type { ChatRoomAction } from "./actions.js";
 import type { ChatRoomState as ChatRoomGlobalState } from "./schema/types.js";
 
 type ChatRoomLocalState = Record<PropertyKey, never>;
+
 type ChatRoomPHState = PHBaseState & {
   global: ChatRoomGlobalState;
   local: ChatRoomLocalState;

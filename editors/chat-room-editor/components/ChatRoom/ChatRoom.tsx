@@ -54,6 +54,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
         flexDirection: "column",
         height: "100%",
         flex: 1,
+        padding: "16px",
       }}
     >
       <div>
@@ -91,6 +92,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            marginTop: "auto",
           }}
         >
           <span
@@ -107,7 +109,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
           </span>
         </div>
       ) : (
-        <div>
+        <div style={{ marginTop: "auto" }}>
           <TextInput onSendMessage={onSendMessage} />
         </div>
       )}

@@ -110,13 +110,13 @@ export const documentModel: DocumentModelGlobalState = {
         global: {
           examples: [],
           initialValue:
-            '"{\\n  \\"id\\": \\"\\",\\n  \\"name\\": \\"\\",\\n  \\"description\\": null,\\n  \\"createdAt\\": null,\\n  \\"createdBy\\": null,\\n  \\"messages\\": []\\n}"',
+            '{\n  "id": "",\n  "name": "",\n  "description": null,\n  "createdAt": null,\n  "createdBy": null,\n  "messages": []\n}',
           schema:
             "type ChatRoomState {\n  id: OID!\n  name: String!\n  description: String\n  createdAt: DateTime\n  createdBy: ID\n  messages: [Message!]!\n}\n\ntype Message {\n  id: OID!\n  sender: Sender!\n  content: String\n  sentAt: DateTime!\n  reactions: [Reaction!]\n}\n\ntype Sender {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}\n\ntype Reaction {\n  type: ReactionType!\n  reactedBy: [ID!]!\n}\n\nenum ReactionType {\n  THUMBS_UP\n  THUMBS_DOWN\n  LAUGH\n  HEART\n  CRY\n}",
         },
         local: {
           examples: [],
-          initialValue: '""',
+          initialValue: "",
           schema: "",
         },
       },

@@ -1,15 +1,18 @@
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import {
+  useDocumentById,
   useDocumentsInSelectedDrive,
   useDocumentsInSelectedFolder,
-  useDocumentById,
   useSelectedDocument,
 } from "@powerhousedao/reactor-browser";
 import type {
-  ChatRoomDocument,
   ChatRoomAction,
+  ChatRoomDocument,
 } from "@powerhousedao/chatroom-package/document-models/chat-room";
-import { isChatRoomDocument } from "./gen/document-schema.js";
+import {
+  assertIsChatRoomDocument,
+  isChatRoomDocument,
+} from "./gen/document-schema.js";
 
 /** Hook to get a ChatRoom document by its id */
 export function useChatRoomDocumentById(
@@ -23,12 +26,14 @@ export function useChatRoomDocumentById(
 }
 
 /** Hook to get the selected ChatRoom document */
-export function useSelectedChatRoomDocument():
-  | [ChatRoomDocument, DocumentDispatch<ChatRoomAction>]
-  | [undefined, undefined] {
+export function useSelectedChatRoomDocument(): [
+  ChatRoomDocument,
+  DocumentDispatch<ChatRoomAction>,
+] {
   const [document, dispatch] = useSelectedDocument();
-  if (!isChatRoomDocument(document)) return [undefined, undefined];
-  return [document, dispatch];
+
+  assertIsChatRoomDocument(document);
+  return [document, dispatch] as const;
 }
 
 /** Hook to get all ChatRoom documents in the selected drive */

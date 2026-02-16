@@ -1,115 +1,115 @@
 {
-    "author": {
-        "name": "Powerhouse",
-        "website": "https://www.powerhouse.inc/"
-    },
-    "description": "A chat room document model for managing messages and reactions",
-    "extension": "phcr",
-    "id": "powerhouse/chat-room",
-    "name": "ChatRoom",
-    "specifications": [
+  "author": {
+    "name": "Powerhouse",
+    "website": "https://www.powerhouse.inc/"
+  },
+  "description": "A chat room document model for managing messages and reactions",
+  "extension": "phcr",
+  "id": "powerhouse/chat-room",
+  "name": "ChatRoom",
+  "specifications": [
+    {
+      "changeLog": [],
+      "modules": [
         {
-            "changeLog": [],
-            "modules": [
+          "description": "Operations for managing chat messages",
+          "id": "messages",
+          "name": "messages",
+          "operations": [
+            {
+              "description": "Add a new message to the chat room",
+              "errors": [
                 {
-                    "description": "Operations for managing chat messages",
-                    "id": "messages",
-                    "name": "messages",
-                    "operations": [
-                        {
-                            "description": "Add a new message to the chat room",
-                            "errors": [
-                                {
-                                    "code": "MESSAGE_CONTENT_CANNOT_BE_EMPTY",
-                                    "description": "Message content cannot be empty",
-                                    "id": "message-content-empty",
-                                    "name": "MessageContentCannotBeEmptyError",
-                                    "template": ""
-                                }
-                            ],
-                            "examples": [],
-                            "id": "add-message",
-                            "name": "ADD_MESSAGE",
-                            "reducer": "if (action.input.content === \"\") {\n  throw new MessageContentCannotBeEmptyError();\n}\n\nconst newMessage = {\n  id: action.input.messageId,\n  sender: {\n    id: action.input.sender.id,\n    name: action.input.sender.name || null,\n    avatarUrl: action.input.sender.avatarUrl || null,\n  },\n  content: action.input.content,\n  sentAt: action.input.sentAt,\n  reactions: [],\n};\n\nstate.messages.push(newMessage);",
-                            "schema": "input AddMessageInput {\n  messageId: OID!\n  sender: SenderInput!\n  content: String!\n  sentAt: DateTime!\n}\n\ninput SenderInput {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}",
-                            "scope": "global",
-                            "template": "Add a new message to the chat room"
-                        },
-                        {
-                            "description": "Add an emoji reaction to a message",
-                            "errors": [
-                                {
-                                    "code": "MESSAGE_NOT_FOUND",
-                                    "description": "The specified message does not exist",
-                                    "id": "message-not-found",
-                                    "name": "MessageNotFoundError",
-                                    "template": ""
-                                }
-                            ],
-                            "examples": [],
-                            "id": "add-emoji-reaction",
-                            "name": "ADD_EMOJI_REACTION",
-                            "reducer": "const message = state.messages.find(m => m.id === action.input.messageId);\nif (!message) {\n  throw new MessageNotFoundError(`Message with ID ${action.input.messageId} not found`);\n}\n\nif (!message.reactions) {\n  message.reactions = [];\n}\n\nconst existingReaction = message.reactions.find(r => r.type === action.input.type);\n\nif (existingReaction) {\n  if (!existingReaction.reactedBy.includes(action.input.reactedBy)) {\n    existingReaction.reactedBy.push(action.input.reactedBy);\n  }\n} else {\n  message.reactions.push({\n    type: action.input.type,\n    reactedBy: [action.input.reactedBy]\n  });\n}",
-                            "schema": "input AddEmojiReactionInput {\n  messageId: OID!\n  reactedBy: ID!\n  type: ReactionType!\n}",
-                            "scope": "global",
-                            "template": "Add an emoji reaction to a message"
-                        },
-                        {
-                            "description": "Remove an emoji reaction from a message",
-                            "errors": [],
-                            "examples": [],
-                            "id": "remove-emoji-reaction",
-                            "name": "REMOVE_EMOJI_REACTION",
-                            "reducer": "const message = state.messages.find(m => m.id === action.input.messageId);\nif (!message) {\n  throw new MessageNotFoundError(`Message with ID ${action.input.messageId} not found`);\n}\n\nif (!message.reactions) {\n  return;\n}\n\nconst reactionIndex = message.reactions.findIndex(r => r.type === action.input.type);\nif (reactionIndex === -1) {\n  return;\n}\n\nconst reaction = message.reactions[reactionIndex];\nconst userIndex = reaction.reactedBy.indexOf(action.input.senderId);\n\nif (userIndex !== -1) {\n  reaction.reactedBy.splice(userIndex, 1);\n  \n  if (reaction.reactedBy.length === 0) {\n    message.reactions.splice(reactionIndex, 1);\n  }\n}",
-                            "schema": "input RemoveEmojiReactionInput {\n  messageId: OID!\n  senderId: ID!\n  type: ReactionType!\n}",
-                            "scope": "global",
-                            "template": "Remove an emoji reaction from a message"
-                        }
-                    ]
-                },
-                {
-                    "description": "Operations for managing chat room settings",
-                    "id": "settings",
-                    "name": "settings",
-                    "operations": [
-                        {
-                            "description": "Update the chat room name",
-                            "errors": [],
-                            "examples": [],
-                            "id": "edit-chat-name",
-                            "name": "EDIT_CHAT_NAME",
-                            "reducer": "state.name = action.input.name || \"\";",
-                            "schema": "input EditChatNameInput {\n  name: String\n}",
-                            "scope": "global",
-                            "template": "Update the chat room name"
-                        },
-                        {
-                            "description": "Update the chat room description",
-                            "errors": [],
-                            "examples": [],
-                            "id": "edit-chat-description",
-                            "name": "EDIT_CHAT_DESCRIPTION",
-                            "reducer": "state.description = action.input.description || \"\";",
-                            "schema": "input EditChatDescriptionInput {\n  description: String\n}",
-                            "scope": "global",
-                            "template": "Update the chat room description"
-                        }
-                    ]
+                  "code": "MESSAGE_CONTENT_CANNOT_BE_EMPTY",
+                  "description": "Message content cannot be empty",
+                  "id": "message-content-empty",
+                  "name": "MessageContentCannotBeEmptyError",
+                  "template": ""
                 }
-            ],
-            "state": {
-                "global": {
-                    "examples": [],
-                    "initialValue": "{\n  \"id\": \"\",\n  \"name\": \"\",\n  \"description\": null,\n  \"createdAt\": null,\n  \"createdBy\": null,\n  \"messages\": []\n}",
-                    "schema": "type ChatRoomState {\n  id: OID!\n  name: String!\n  description: String\n  createdAt: DateTime\n  createdBy: ID\n  messages: [Message!]!\n}\n\ntype Message {\n  id: OID!\n  sender: Sender!\n  content: String\n  sentAt: DateTime!\n  reactions: [Reaction!]\n}\n\ntype Sender {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}\n\ntype Reaction {\n  type: ReactionType!\n  reactedBy: [ID!]!\n}\n\nenum ReactionType {\n  THUMBS_UP\n  THUMBS_DOWN\n  LAUGH\n  HEART\n  CRY\n}"
-                },
-                "local": {
-                    "examples": [],
-                    "initialValue": "",
-                    "schema": ""
-                }
+              ],
+              "examples": [],
+              "id": "add-message",
+              "name": "ADD_MESSAGE",
+              "reducer": "if (action.input.content === \"\") {\n  throw new MessageContentCannotBeEmptyError();\n}\n\nconst newMessage = {\n  id: action.input.messageId,\n  sender: {\n    id: action.input.sender.id,\n    name: action.input.sender.name || null,\n    avatarUrl: action.input.sender.avatarUrl || null,\n  },\n  content: action.input.content,\n  sentAt: action.input.sentAt,\n  reactions: [],\n};\n\nstate.messages.push(newMessage);",
+              "schema": "input AddMessageInput {\n  messageId: OID!\n  sender: SenderInput!\n  content: String!\n  sentAt: DateTime!\n}\n\ninput SenderInput {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}",
+              "scope": "global",
+              "template": "Add a new message to the chat room"
             },
-            "version": 1
+            {
+              "description": "Add an emoji reaction to a message",
+              "errors": [
+                {
+                  "code": "MESSAGE_NOT_FOUND",
+                  "description": "The specified message does not exist",
+                  "id": "message-not-found",
+                  "name": "MessageNotFoundError",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "id": "add-emoji-reaction",
+              "name": "ADD_EMOJI_REACTION",
+              "reducer": "const message = state.messages.find(m => m.id === action.input.messageId);\nif (!message) {\n  throw new MessageNotFoundError(`Message with ID ${action.input.messageId} not found`);\n}\n\nif (!message.reactions) {\n  message.reactions = [];\n}\n\nconst existingReaction = message.reactions.find(r => r.type === action.input.type);\n\nif (existingReaction) {\n  if (!existingReaction.reactedBy.includes(action.input.reactedBy)) {\n    existingReaction.reactedBy.push(action.input.reactedBy);\n  }\n} else {\n  message.reactions.push({\n    type: action.input.type,\n    reactedBy: [action.input.reactedBy]\n  });\n}",
+              "schema": "input AddEmojiReactionInput {\n  messageId: OID!\n  reactedBy: ID!\n  type: ReactionType!\n}",
+              "scope": "global",
+              "template": "Add an emoji reaction to a message"
+            },
+            {
+              "description": "Remove an emoji reaction from a message",
+              "errors": [],
+              "examples": [],
+              "id": "remove-emoji-reaction",
+              "name": "REMOVE_EMOJI_REACTION",
+              "reducer": "const message = state.messages.find(m => m.id === action.input.messageId);\nif (!message) {\n  throw new MessageNotFoundError(`Message with ID ${action.input.messageId} not found`);\n}\n\nif (!message.reactions) {\n  return;\n}\n\nconst reactionIndex = message.reactions.findIndex(r => r.type === action.input.type);\nif (reactionIndex === -1) {\n  return;\n}\n\nconst reaction = message.reactions[reactionIndex];\nconst userIndex = reaction.reactedBy.indexOf(action.input.senderId);\n\nif (userIndex !== -1) {\n  reaction.reactedBy.splice(userIndex, 1);\n  \n  if (reaction.reactedBy.length === 0) {\n    message.reactions.splice(reactionIndex, 1);\n  }\n}",
+              "schema": "input RemoveEmojiReactionInput {\n  messageId: OID!\n  senderId: ID!\n  type: ReactionType!\n}",
+              "scope": "global",
+              "template": "Remove an emoji reaction from a message"
+            }
+          ]
+        },
+        {
+          "description": "Operations for managing chat room settings",
+          "id": "settings",
+          "name": "settings",
+          "operations": [
+            {
+              "description": "Update the chat room name",
+              "errors": [],
+              "examples": [],
+              "id": "edit-chat-name",
+              "name": "EDIT_CHAT_NAME",
+              "reducer": "state.name = action.input.name || \"\";",
+              "schema": "input EditChatNameInput {\n  name: String\n}",
+              "scope": "global",
+              "template": "Update the chat room name"
+            },
+            {
+              "description": "Update the chat room description",
+              "errors": [],
+              "examples": [],
+              "id": "edit-chat-description",
+              "name": "EDIT_CHAT_DESCRIPTION",
+              "reducer": "state.description = action.input.description || \"\";",
+              "schema": "input EditChatDescriptionInput {\n  description: String\n}",
+              "scope": "global",
+              "template": "Update the chat room description"
+            }
+          ]
         }
-    ]
+      ],
+      "state": {
+        "global": {
+          "examples": [],
+          "initialValue": "{\n  \"id\": \"\",\n  \"name\": \"\",\n  \"description\": null,\n  \"createdAt\": null,\n  \"createdBy\": null,\n  \"messages\": []\n}",
+          "schema": "type ChatRoomState {\n  id: OID!\n  name: String!\n  description: String\n  createdAt: DateTime\n  createdBy: ID\n  messages: [Message!]!\n}\n\ntype Message {\n  id: OID!\n  sender: Sender!\n  content: String\n  sentAt: DateTime!\n  reactions: [Reaction!]\n}\n\ntype Sender {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}\n\ntype Reaction {\n  type: ReactionType!\n  reactedBy: [ID!]!\n}\n\nenum ReactionType {\n  THUMBS_UP\n  THUMBS_DOWN\n  LAUGH\n  HEART\n  CRY\n}"
+        },
+        "local": {
+          "examples": [],
+          "initialValue": "",
+          "schema": ""
+        }
+      },
+      "version": 1
+    }
+  ]
 }

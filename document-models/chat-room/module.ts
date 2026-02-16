@@ -9,8 +9,9 @@ import {
   utils,
 } from "@powerhousedao/chatroom-package/document-models/chat-room";
 
-/** Document model module for the Todo List document type */
+/** Document model module for the ChatRoom document type */
 export const ChatRoom: DocumentModelModule<ChatRoomPHState> = {
+  version: 1,
   reducer,
   actions,
   utils,

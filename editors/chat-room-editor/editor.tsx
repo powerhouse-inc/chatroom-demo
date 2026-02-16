@@ -124,7 +124,9 @@ export default function Editor() {
   return (
     <div
       style={{
-        height: "calc(100vh - 140px)",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <ChatRoom

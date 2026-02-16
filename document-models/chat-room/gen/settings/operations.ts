@@ -1,9 +1,9 @@
 import { type SignalDispatch } from "document-model";
-import {
-  type EditChatNameAction,
-  type EditChatDescriptionAction,
+import type {
+  EditChatNameAction,
+  EditChatDescriptionAction,
 } from "./actions.js";
-import { type ChatRoomState } from "../types.js";
+import type { ChatRoomState } from "../types.js";
 
 export interface ChatRoomSettingsOperations {
   editChatNameOperation: (

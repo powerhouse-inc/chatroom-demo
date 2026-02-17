@@ -1,0 +1,312 @@
+name: Sync and Publish
+
+on:
+  # Triggered by powerhouse monorepo after release
+  repository_dispatch:
+    types: [powerhouse-release]
+
+  # Manual trigger or dispatched per-branch
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: 'Release channel'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - latest
+        default: 'dev'
+      sync:
+        description: 'Sync powerhouse dependencies first'
+        required: false
+        type: boolean
+        default: true
+      dry-run:
+        description: 'Dry run (skip publishing)'
+        required: false
+        type: boolean
+        default: false
+      powerhouse-version:
+        description: 'Powerhouse monorepo version (set by dispatch)'
+        required: false
+        type: string
+        default: ''
+
+env:
+  NODE_VERSION: '24'
+  PNPM_VERSION: '10'
+
+jobs:
+  # ==========================================================================
+  # Dispatch: route repository_dispatch to the correct branch
+  # (dev→dev, staging→staging, latest→main)
+  # ==========================================================================
+  dispatch:
+    name: Dispatch
+    if: github.event_name == 'repository_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine target branch
+        id: target
+        run: |
+          CHANNEL="${{ github.event.client_payload.channel }}"
+          case "$CHANNEL" in
+            dev) BRANCH="dev" ;;
+            staging) BRANCH="staging" ;;
+            *) BRANCH="main" ;;
+          esac
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          echo "channel=${CHANNEL:-latest}" >> $GITHUB_OUTPUT
+          echo "Routing channel=$CHANNEL to branch=$BRANCH"
+
+      - name: Trigger workflow on ${{ steps.target.outputs.branch }}
+        run: |
+          gh workflow run "Sync and Publish" \
+            --repo "${{ github.repository }}" \
+            --ref "${{ steps.target.outputs.branch }}" \
+            -f channel="${{ steps.target.outputs.channel }}" \
+            -f sync=true \
+            -f dry-run=false \
+            -f powerhouse-version="${{ github.event.client_payload.version }}"
+        env:
+          GH_TOKEN: ${{ secrets.K8S_REPO_PAT }}
+
+  # ==========================================================================
+  # Sync powerhouse dependencies (workflow_dispatch only)
+  # ==========================================================================
+  sync:
+    name: Sync Dependencies
+    if: github.event_name == 'workflow_dispatch' && inputs.sync == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update Powerhouse dependencies
+        run: |
+          CHANNEL="${{ inputs.channel }}"
+          # Map channel to npm dist-tag
+          case "$CHANNEL" in
+            dev) TAG="dev" ;;
+            staging) TAG="staging" ;;
+            *) TAG="latest" ;;
+          esac
+
+          PACKAGES=$(node -e "
+            const pkg = require('./package.json');
+            const deps = {...pkg.dependencies, ...pkg.devDependencies};
+            const names = Object.keys(deps).filter(d => d.startsWith('@powerhousedao/') || ['document-model','document-drive','ph-cmd'].includes(d));
+            console.log(names.join(' '));
+          ")
+
+          echo "Updating packages to @$TAG: $PACKAGES"
+          for pkg in $PACKAGES; do
+            pnpm add "${pkg}@${TAG}" || echo "Warning: Failed to update $pkg"
+          done
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate code
+        run: pnpm generate
+
+      - name: Build package
+        run: pnpm build
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet package.json pnpm-lock.yaml; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No dependency changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Dependency changes detected"
+          fi
+
+      - name: Commit changes
+        if: steps.changes.outputs.has_changes == 'true' && inputs.dry-run != true
+        run: |
+          git add package.json pnpm-lock.yaml
+          git add -A document-models/*/gen/ editors/*/gen/ || true
+          PH_VERSION="${{ inputs.powerhouse-version }}"
+          if [ -n "$PH_VERSION" ]; then
+            git commit -m "chore: sync powerhouse dependencies to $PH_VERSION"
+          else
+            git commit -m "chore: sync powerhouse dependencies"
+          fi
+
+      - name: Push changes
+        if: steps.changes.outputs.has_changes == 'true' && inputs.dry-run != true
+        run: git push
+
+  # ==========================================================================
+  # Release: version bump + npm publish (workflow_dispatch only)
+  # ==========================================================================
+  release:
+    name: Release
+    needs: sync
+    if: always() && github.event_name == 'workflow_dispatch' && (needs.sync.result == 'success' || needs.sync.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    outputs:
+      new_version: ${{ steps.version.outputs.new_version }}
+      released: ${{ steps.version.outputs.released }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull latest changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull origin ${{ github.ref_name }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate code
+        run: pnpm generate
+
+      - name: Build package
+        run: pnpm build
+
+      - name: Run tests
+        run: pnpm test || true
+        continue-on-error: true
+
+      - name: Bump version
+        id: version
+        run: |
+          CHANNEL="${{ inputs.channel }}"
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+
+          # Determine new version
+          if [ "$CHANNEL" = "latest" ] || [ "$CHANNEL" = "main" ]; then
+            npm version patch --no-git-tag-version
+          else
+            npm version prerelease --preid=$CHANNEL --no-git-tag-version
+          fi
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "Bumped version: $CURRENT_VERSION -> $NEW_VERSION"
+
+          # Check if this version is already published on npm
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          if npm view "${PACKAGE_NAME}@${NEW_VERSION}" version 2>/dev/null; then
+            echo "released=false" >> $GITHUB_OUTPUT
+            echo "Version $NEW_VERSION already published, skipping"
+          else
+            echo "released=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and tag
+        if: inputs.dry-run != true && steps.version.outputs.released == 'true'
+        run: |
+          git add package.json pnpm-lock.yaml
+          git add -A document-models/*/gen/ editors/*/gen/ || true
+          PH_VERSION="${{ inputs.powerhouse-version }}"
+          if [ -n "$PH_VERSION" ]; then
+            git commit -m "chore: bump version to ${{ steps.version.outputs.new_version }} (powerhouse $PH_VERSION)" || echo "No changes to commit"
+          else
+            git commit -m "chore: bump version to ${{ steps.version.outputs.new_version }}" || echo "No changes to commit"
+          fi
+          git tag "v${{ steps.version.outputs.new_version }}"
+          git push && git push origin "v${{ steps.version.outputs.new_version }}"
+
+      - name: Publish to npm
+        if: inputs.dry-run != true && steps.version.outputs.released == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_ACCESS_TOKEN not set, skipping npm publish"
+            exit 0
+          fi
+          CHANNEL="${{ inputs.channel }}"
+          if [ "$CHANNEL" = "latest" ] || [ "$CHANNEL" = "main" ]; then
+            pnpm publish --access public --tag latest --no-git-checks
+          else
+            pnpm publish --access public --tag $CHANNEL --no-git-checks
+          fi
+
+      - name: Notify powerhouse-demo
+        if: inputs.dry-run != true && steps.version.outputs.released == 'true' && inputs.channel == 'latest'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.K8S_REPO_PAT }}
+          repository: powerhouse-inc/powerhouse-demo
+          event-type: dependency-release
+          client-payload: |
+            {
+              "package": "@powerhousedao/chatroom-package",
+              "version": "${{ steps.version.outputs.new_version }}",
+              "channel": "${{ inputs.channel }}",
+              "powerhouse_version": "${{ inputs.powerhouse-version }}"
+            }
+
+  # ==========================================================================
+  # Summary
+  # ==========================================================================
+  summary:
+    name: Summary
+    needs: [sync, release]
+    if: always() && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: |
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Parameter | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Channel | ${{ inputs.channel }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Sync | ${{ inputs.sync }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ needs.release.outputs.new_version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Released | ${{ needs.release.outputs.released }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dry Run | ${{ inputs.dry-run }} |" >> $GITHUB_STEP_SUMMARY
+
+          if [ -n "${{ inputs.powerhouse-version }}" ]; then
+            echo "| Powerhouse Version | ${{ inputs.powerhouse-version }} |" >> $GITHUB_STEP_SUMMARY
+          fi

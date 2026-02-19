@@ -1,5 +1,6 @@
 import { generateId } from "document-model/core";
 import { useUser } from "@powerhousedao/reactor-browser/connect";
+import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedChatRoomDocument } from "../../document-models/chat-room/hooks.js";
 import {
   addMessage,
@@ -127,8 +128,11 @@ export default function Editor() {
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        padding: "1rem",
+        gap: "1rem",
       }}
     >
+      <DocumentToolbar />
       <ChatRoom
         description={
           document.state.global.description || "This is a chat room demo"

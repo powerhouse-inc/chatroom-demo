@@ -1,0 +1,49 @@
+import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
+import {
+  useDocumentById,
+  useDocumentsInSelectedDrive,
+  useDocumentsInSelectedFolder,
+  useSelectedDocument,
+} from "@powerhousedao/reactor-browser";
+import type {
+  ChatRoomAction,
+  ChatRoomDocument,
+} from "@powerhousedao/chatroom-package/document-models/chat-room/v1";
+import {
+  assertIsChatRoomDocument,
+  isChatRoomDocument,
+} from "./gen/document-schema.js";
+
+/** Hook to get a ChatRoom document by its id */
+export function useChatRoomDocumentById(
+  documentId: string | null | undefined,
+):
+  | [ChatRoomDocument, DocumentDispatch<ChatRoomAction>]
+  | [undefined, undefined] {
+  const [document, dispatch] = useDocumentById(documentId);
+  if (!isChatRoomDocument(document)) return [undefined, undefined];
+  return [document, dispatch];
+}
+
+/** Hook to get the selected ChatRoom document */
+export function useSelectedChatRoomDocument(): [
+  ChatRoomDocument,
+  DocumentDispatch<ChatRoomAction>,
+] {
+  const [document, dispatch] = useSelectedDocument();
+
+  assertIsChatRoomDocument(document);
+  return [document, dispatch] as const;
+}
+
+/** Hook to get all ChatRoom documents in the selected drive */
+export function useChatRoomDocumentsInSelectedDrive() {
+  const documentsInSelectedDrive = useDocumentsInSelectedDrive();
+  return documentsInSelectedDrive?.filter(isChatRoomDocument);
+}
+
+/** Hook to get all ChatRoom documents in the selected folder */
+export function useChatRoomDocumentsInSelectedFolder() {
+  const documentsInSelectedFolder = useDocumentsInSelectedFolder();
+  return documentsInSelectedFolder?.filter(isChatRoomDocument);
+}

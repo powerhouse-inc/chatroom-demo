@@ -1,0 +1,130 @@
+import * as z from "zod";
+import type {
+  AddEmojiReactionInput,
+  AddMessageInput,
+  ChatRoomState,
+  EditChatDescriptionInput,
+  EditChatNameInput,
+  Message,
+  Reaction,
+  ReactionType,
+  RemoveEmojiReactionInput,
+  Sender,
+  SenderInput,
+} from "./types.js";
+
+type Properties<T> = Required<{
+  [K in keyof T]: z.ZodType<T[K]>;
+}>;
+
+type definedNonNullAny = {};
+
+export const isDefinedNonNullAny = (v: any): v is definedNonNullAny =>
+  v !== undefined && v !== null;
+
+export const definedNonNullAnySchema = z
+  .any()
+  .refine((v) => isDefinedNonNullAny(v));
+
+export const ReactionTypeSchema = z.enum([
+  "CRY",
+  "HEART",
+  "LAUGH",
+  "THUMBS_DOWN",
+  "THUMBS_UP",
+]);
+
+export function AddEmojiReactionInputSchema(): z.ZodObject<
+  Properties<AddEmojiReactionInput>
+> {
+  return z.object({
+    messageId: z.string(),
+    reactedBy: z.string(),
+    type: ReactionTypeSchema,
+  });
+}
+
+export function AddMessageInputSchema(): z.ZodObject<
+  Properties<AddMessageInput>
+> {
+  return z.object({
+    content: z.string(),
+    messageId: z.string(),
+    sender: z.lazy(() => SenderInputSchema()),
+    sentAt: z.iso.datetime(),
+  });
+}
+
+export function ChatRoomStateSchema(): z.ZodObject<Properties<ChatRoomState>> {
+  return z.object({
+    __typename: z.literal("ChatRoomState").optional(),
+    createdAt: z.iso.datetime().nullish(),
+    createdBy: z.string().nullish(),
+    description: z.string().nullish(),
+    id: z.string(),
+    messages: z.array(z.lazy(() => MessageSchema())),
+    name: z.string(),
+  });
+}
+
+export function EditChatDescriptionInputSchema(): z.ZodObject<
+  Properties<EditChatDescriptionInput>
+> {
+  return z.object({
+    description: z.string().nullish(),
+  });
+}
+
+export function EditChatNameInputSchema(): z.ZodObject<
+  Properties<EditChatNameInput>
+> {
+  return z.object({
+    name: z.string().nullish(),
+  });
+}
+
+export function MessageSchema(): z.ZodObject<Properties<Message>> {
+  return z.object({
+    __typename: z.literal("Message").optional(),
+    content: z.string().nullish(),
+    id: z.string(),
+    reactions: z.array(z.lazy(() => ReactionSchema())).nullish(),
+    sender: z.lazy(() => SenderSchema()),
+    sentAt: z.iso.datetime(),
+  });
+}
+
+export function ReactionSchema(): z.ZodObject<Properties<Reaction>> {
+  return z.object({
+    __typename: z.literal("Reaction").optional(),
+    reactedBy: z.array(z.string()),
+    type: ReactionTypeSchema,
+  });
+}
+
+export function RemoveEmojiReactionInputSchema(): z.ZodObject<
+  Properties<RemoveEmojiReactionInput>
+> {
+  return z.object({
+    messageId: z.string(),
+    senderId: z.string(),
+    type: ReactionTypeSchema,
+  });
+}
+
+export function SenderSchema(): z.ZodObject<Properties<Sender>> {
+  return z.object({
+    __typename: z.literal("Sender").optional(),
+    avatarUrl: z.url().nullish(),
+    id: z.string(),
+    name: z.string().nullish(),
+  });
+}
+
+export function SenderInputSchema(): z.ZodObject<Properties<SenderInput>> {
+  return z.object({
+    avatarUrl: z.url().nullish(),
+    id: z.string(),
+    name: z.string().nullish(),
+  });
+}

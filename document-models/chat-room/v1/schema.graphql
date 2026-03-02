@@ -1,0 +1,93 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+type ChatRoomState {
+  id: OID!
+  name: String!
+  description: String
+  createdAt: DateTime
+  createdBy: ID
+  messages: [Message!]!
+}
+
+type Message {
+  id: OID!
+  sender: Sender!
+  content: String
+  sentAt: DateTime!
+  reactions: [Reaction!]
+}
+
+type Sender {
+  id: ID!
+  name: String
+  avatarUrl: URL
+}
+
+type Reaction {
+  type: ReactionType!
+  reactedBy: [ID!]!
+}
+
+enum ReactionType {
+  THUMBS_UP
+  THUMBS_DOWN
+  LAUGH
+  HEART
+  CRY
+}
+
+# messages
+
+input AddMessageInput {
+  messageId: OID!
+  sender: SenderInput!
+  content: String!
+  sentAt: DateTime!
+}
+
+input SenderInput {
+  id: ID!
+  name: String
+  avatarUrl: URL
+}
+
+input AddEmojiReactionInput {
+  messageId: OID!
+  reactedBy: ID!
+  type: ReactionType!
+}
+
+input RemoveEmojiReactionInput {
+  messageId: OID!
+  senderId: ID!
+  type: ReactionType!
+}
+
+# settings
+
+input EditChatNameInput {
+  name: String
+}
+
+input EditChatDescriptionInput {
+  description: String
+}

@@ -5,7 +5,7 @@ import type {
 import type {
   Message,
   ReactionType,
-} from "../../document-models/chat-room/gen/schema/types.js";
+} from "../../document-models/chat-room/v1/gen/schema/types.js";
 
 const emojis = [
   "😀",

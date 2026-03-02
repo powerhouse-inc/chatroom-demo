@@ -1,14 +1,14 @@
 import { generateId } from "document-model/core";
 import { useUser } from "@powerhousedao/reactor-browser/connect";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
-import { useSelectedChatRoomDocument } from "../../document-models/chat-room/hooks.js";
+import { useSelectedChatRoomDocument } from "../../document-models/chat-room/v1/hooks.js";
 import {
   addMessage,
   addEmojiReaction,
   removeEmojiReaction,
   editChatName,
   editChatDescription,
-} from "../../document-models/chat-room/gen/creators.js";
+} from "../../document-models/chat-room/v1/gen/creators.js";
 import {
   ChatRoom,
   type ChatRoomProps,

@@ -1,0 +1,19 @@
+import type { DocumentModelModule } from "document-model";
+import { createState } from "document-model";
+import { defaultBaseState } from "document-model/core";
+import type { ChatRoomPHState } from "@powerhousedao/chatroom-package/document-models/chat-room/v1";
+import {
+  actions,
+  documentModel,
+  reducer,
+  utils,
+} from "@powerhousedao/chatroom-package/document-models/chat-room/v1";
+
+/** Document model module for the ChatRoom document type */
+export const ChatRoom: DocumentModelModule<ChatRoomPHState> = {
+  version: 1,
+  reducer,
+  actions,
+  utils,
+  documentModel: createState(defaultBaseState(), documentModel),
+};
